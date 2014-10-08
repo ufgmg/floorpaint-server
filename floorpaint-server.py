@@ -47,5 +47,5 @@ if __name__ == '__main__':
 	app.config['DATABASE'] = os.path.join(app.root_path, arguments['<filename>'])
 	if app.config['--init']:
 		init_db()
-    else:
+	else:
 		app.run()
