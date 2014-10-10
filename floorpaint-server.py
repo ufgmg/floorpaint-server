@@ -1,14 +1,13 @@
-"""Usage: floorpaint-server.py [-ho <filename>] [--debug] -i
+"""Usage: floorpaint-server.py [-ho <filename>] [--debug]
 
 -h --help  show this
 -o <filename>, --output <filename>  specify output file [default: ./grid.db]
 --debug  use debug
--i --init  specify initialization
 """
 import os
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort
+    abort
 from contextlib import closing
 from docopt import docopt
 
@@ -32,9 +31,9 @@ def teardown_request(exception):
 def main_page(): pass
 @app.route('/level')
 def get_level():
-	cur = g.db.execute('SELECT grid FROM entries WHERE id >= RAND() * (SELECT MAX(id) FROM entries) ORDER BY id LIMIT 1')
-	entries = row[0] for row in cur.fetchone()
-	return entries
+    cur = g.db.execute('SELECT grid FROM entries WHERE id >= RAND() * (SELECT MAX(id) FROM entries) ORDER BY id LIMIT 1')
+    entries = row[0] for row in cur.fetchone()
+    return entries
 @app.route('/level/add', methods=['POST'])
 def add_entry():
     g.db.execute('insert into entries (grid) values (?)',
@@ -42,10 +41,9 @@ def add_entry():
     g.db.commit()
     return redirect(url_for('main_page'))
 if __name__ == '__main__':
-	arguments = docopt(__doc__)
-	app.config['DEBUG'] = arguments['--debug']
-	app.config['DATABASE'] = os.path.join(app.root_path, arguments['<filename>'])
-	if app.config['--init']:
-		init_db()
-	else:
-		app.run()
+    arguments = docopt(__doc__)
+    app.config['DEBUG'] = arguments['--debug']
+    app.config['DATABASE'] = os.path.join(app.root_path, arguments['<filename>'])
+    if not os.path.isfile(app.config['DATABASE']):
+        init_db()
+    app.run()
