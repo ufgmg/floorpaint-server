@@ -1,5 +1,5 @@
-drop table if exists entries;
-create table entries (
-  id integer primary key autoincrement,
-  grid text not null
+create table levels (
+  id text primary key,
+  difficulty text not null,
+  active integer not null
 );
