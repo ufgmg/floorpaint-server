@@ -20,6 +20,8 @@ from flask import send_file
 from flask import session
 from flask import url_for
 
+BLOCK_TYPES = 'bk'
+
 app = Flask(__name__)
 
 def connect_db():
@@ -30,6 +32,21 @@ def init_db():
         with app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
+
+def valid_level(id):
+    try:
+        _, level, _ = id.split('$')
+        size, start, specials = level.split(':')
+        width, height = size.split('x')
+        valid_square_ids = range(int(width) * int(height))
+        start = int(start)
+        if specials:
+            specials = [(int(s[:-1]), s[-1]) for s in specials.split(',')]
+    except ValueError:
+        return False
+    return (start in valid_square_ids and
+            all(id in valid_square_ids and type in BLOCK_TYPES
+                for id, type in specials))
 
 @app.before_request
 def before_request():
@@ -72,6 +89,8 @@ def post_level():
     level = (request.form['id'],
              request.form['difficulty'],
              True)
+    if not valid_level(level[0]):
+        return Response("invalid level", status=400, mimetype='text/plain')
     g.db.execute('INSERT INTO levels VALUES (?, ?, ?)', level)
     g.db.commit()
     return redirect(url_for('success'))
