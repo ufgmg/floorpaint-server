@@ -49,10 +49,14 @@ def get_level(id):
 
 @app.route('/level/random')
 def get_random_level():
-    cur = g.db.execute('SELECT * FROM levels')
-    levels = cur.fetchall()
-    # TODO: filter based on query parameters, e.g.,
     # http://whatever.org/level/random?difficulty=hard
+    difficulty = request.args.get('difficulty')
+    if difficulty is not None:
+        query = "SELECT * FROM levels WHERE difficulty='" + difficulty + "'"
+    else:
+        query = 'SELECT * FROM levels'
+    cur = g.db.execute(query)
+    levels = cur.fetchall()
     level = random.choice(levels)
     return flask.Response(level[0], mimetype='text/plain')
 
@@ -68,7 +72,7 @@ def add_entry():
 if __name__ == '__main__':
     arguments = docopt(__doc__)
     app.config['DEBUG'] = arguments['--debug']
-    app.config['DATABASE'] = os.path.join(app.root_path, arguments['<filename>'])
+    app.config['DATABASE'] = os.path.join(app.root_path, arguments['DATABASE_FILE'])
     if not os.path.exists(app.config['DATABASE']):
         init_db()
     app.run()
