@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>floorpaint: new level</title>
+    <style>
+ul {margin: 1em; padding: 0;}
+li {list-style: none;}
+input {width: 100%;}
+    </style>
+  </head>
+  <body>
+    <form action="/level" method="post">
+      <ul>
+        <li><input name="id"/></li>
+        <li>
+          <select name="difficulty" size=3>
+            <option>trivial</option>
+            <option>hard</option>
+            <option>mind-bogglingly difficult</option>
+          </select>
+        </li>
+        <li><button type="submit">Add level</button></li>
+      </ul>
+    </form>
+  </body>
+</html>
