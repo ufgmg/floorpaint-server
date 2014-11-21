@@ -71,10 +71,9 @@ def get_random_level():
     # http://whatever.org/level/random?difficulty=hard
     difficulty = request.args.get('difficulty')
     if difficulty is not None:
-        query = "SELECT * FROM levels WHERE difficulty='" + difficulty + "'"
+        cur = g.db.execute('SELECT * FROM levels WHERE difficulty=?', difficulty)
     else:
-        query = 'SELECT * FROM levels'
-    cur = g.db.execute(query)
+        cur = g.db.execute('SELECT * FROM levels')
     levels = cur.fetchall()
     level = random.choice(levels)
     return Response(level[0], mimetype='text/plain')
